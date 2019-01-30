@@ -1,22 +1,22 @@
 require 'pry'
 class CashRegister
 
-  attr_accessor :discount, :total
+  attr_accessor :discount, :total, :cart
 
-  ITEMS = {}
+
 
   def initialize(discount=nil)
     @total = 0
     @discount = discount
+    @cart = []
   end
 
   def add_item(title, price, quantity=nil)
 
-    ITEMS[title] = {}
-    ITEMS[title]["price"] = price
+    current_item = {title => {"price" => price, "quantity" => quantity}}
+    cart << current_item
     if quantity != nil
       self.total += (price * quantity)
-      ITEMS[title]["quantity"] = quantity
     else
       self.total += price
     end
@@ -34,6 +34,34 @@ class CashRegister
   end
 
   def items
-    ITEMS.keys
+    items_array = []
+    cart.each_with_index do |item, index|
+      item.each do |name, info|
+        num_in_cart = cart[index][name]["quantity"]
+        if num_in_cart != nil
+          num_in_cart.times do
+            items_array << name
+          end
+        else
+            items_array << name
+        end
+      end
+    end
+    items_array
   end
+
+  def void_last_transaction
+    transaction_hash = cart[-1]
+    transaction_hash.each do |name, info|
+      quantity = transaction_hash[name]["quantity"]
+      price = transaction_hash[name]["price"]
+      if (quantity != nil)
+        self.total -= (quantity * price)
+      else
+        self.total -= price
+      end
+    end
+    self.total
+  end
+
 end
