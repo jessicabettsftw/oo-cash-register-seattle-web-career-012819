@@ -52,6 +52,7 @@ class CashRegister
 
   def void_last_transaction
     transaction_hash = cart[-1]
+    cart.delete_at(-1)
     transaction_hash.each do |name, info|
       quantity = transaction_hash[name]["quantity"]
       price = transaction_hash[name]["price"]
